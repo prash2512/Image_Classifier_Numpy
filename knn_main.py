@@ -3,6 +3,7 @@ import numpy as np
 from data_utils import load_CIFAR10
 import matplotlib.pyplot as plt
 from classifiers import KNearestNeighbor
+from utils import *
 
 plt.rcParams['figure.figsize'] = (10.0, 8.0) # set default size of plots
 plt.rcParams['image.interpolation'] = 'nearest'
@@ -24,22 +25,6 @@ print('Training labels shape: ', y_train.shape)
 print('Test data shape: ', X_test.shape)
 print('Test labels shape: ', y_test.shape)
 
-def plot_samples():
-    classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-    num_classes = len(classes)
-    samples_per_class = 7
-    for y, cls in enumerate(classes):
-        idxs = np.flatnonzero(y_train == y)
-        idxs = np.random.choice(idxs, samples_per_class, replace=False)
-        for i, idx in enumerate(idxs):
-            plt_idx = i * num_classes + y + 1
-            plt.subplot(samples_per_class, num_classes, plt_idx)
-            plt.imshow(X_train[idx].astype('uint8'))
-            plt.axis('off')
-            if i == 0:
-                plt.title(cls)
-    plt.show()
-
 num_training = 5000
 mask = list(range(num_training))
 X_train = X_train[mask]
@@ -54,16 +39,17 @@ X_train = np.reshape(X_train, (X_train.shape[0], -1))
 X_test = np.reshape(X_test, (X_test.shape[0], -1))
 print(X_train.shape, X_test.shape)
 
+
+
+num_folds = 5
+k= choose_best_k(X_train,y_train,num_folds)
+print(k)
 classifier = KNearestNeighbor()
 classifier.train(X_train, y_train)
 
 dists = classifier.compute_distances_no_loops(X_test)
-print(dists.shape)
-plt.imshow(dists, interpolation='none')
-plt.show()
 
-y_test_pred = classifier.predict_labels(dists,y_test, k=4)
-
+y_test_pred = classifier.predict_labels(dists,k)
 # Compute and print the fraction of correctly predicted examples
 num_correct = np.sum(y_test_pred == y_test)
 accuracy = float(num_correct) / num_test

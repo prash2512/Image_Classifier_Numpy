@@ -97,7 +97,7 @@ class KNearestNeighbor(object):
     dists = np.sqrt((-2*np.dot(X,self.X_train.T)+np.sum(X**2,axis=1)[:,np.newaxis]+np.sum(self.X_train**2,axis=1)))
     return dists
 
-  def predict_labels(self, dists,y_test,k=1):
+  def predict_labels(self, dists, k=1):
     """
     Given a matrix of distances between test points and training points,
     predict a label for each test point.
