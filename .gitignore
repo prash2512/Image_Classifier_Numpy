@@ -1,0 +1,4 @@
+*.pyc
+*.html
+*__init__.py
+__pycached__
