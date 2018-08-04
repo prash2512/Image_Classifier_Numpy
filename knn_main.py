@@ -10,6 +10,7 @@ plt.rcParams['image.interpolation'] = 'nearest'
 plt.rcParams['image.cmap'] = 'gray'
 
 cifar10_dir = 'datasets/cifar-10-batches-py'
+
 try:
    del X_train, y_train
    del X_test, y_test
