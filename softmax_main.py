@@ -93,6 +93,39 @@ print(X_train.shape, X_val.shape, X_test.shape, X_dev.shape)
 W = np.random.randn(3073, 10)*0.0001
 
 loss, grad = softmax_loss_naive(W, X_dev, y_dev, 0.000005)
-print(loss)
+print(grad)
 loss, grad = softmax_loss_vectorized(W, X_dev, y_dev, 0.000005)
-print(loss)
+print(grad)
+
+softmax = Softmax()
+tic = time.time()
+loss_hist = softmax.train(X_train, y_train, learning_rate=1e-7, reg=2.5e4,
+                      num_iters=1500, verbose=True)
+toc = time.time()
+print('That took %fs' % (toc - tic))
+
+#plot_loss(loss_hist)
+
+y_train_pred = softmax.predict(X_train)
+print('training accuracy: %f' % (np.mean(y_train == y_train_pred), ))
+y_val_pred = softmax.predict(X_val)
+print('validation accuracy: %f' % (np.mean(y_val == y_val_pred), ))
+
+
+learning_rates = [1e-7, 5e-5]
+regularization_strengths = [2.5e4,5e4]
+
+results = {}
+best_val = -1   # The highest validation accuracy that we have seen so far.
+best_softmax = None # The Linearsoftmax object that achieved the highest validation rate.
+
+results,best_softmax,best_val = choose_best_softmax(X_train,y_train,X_val,y_val,learning_rates,regularization_strengths)
+
+print("Results dictionary",results,"\n\n") 
+print('best validation accuracy achieved during cross-validation: %f\n' % best_val)
+
+y_test_pred = best_softmax.predict(X_test)
+test_accuracy = np.mean(y_test == y_test_pred)
+print('linear softmax on raw pixels final test set accuracy: %f' % test_accuracy)
+
+visualize_bestsoftmax_weights(best_softmax)
