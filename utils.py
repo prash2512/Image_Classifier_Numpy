@@ -3,7 +3,9 @@ import math
 import matplotlib.pyplot as plt
 from classifiers import KNearestNeighbor
 from classifiers.linear_classifier import LinearSVM,Softmax
+from classifiers.neural_net import TwoLayerNet
 from gradient_check import grad_check_sparse
+from vis_utils import *
 
 def plot_samples(X_train,y_train):
     classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
@@ -242,3 +244,61 @@ def visualize_bestsoftmax_weights(best_softmax):
 
     plt.show()
 
+def plot_loss_train_validation_accuracies_nn(stats):
+    # Plot the loss function and train / validation accuracies
+    plt.subplot(2, 1, 1)
+    plt.plot(stats['loss_history'])
+    plt.title('Loss history')
+    plt.xlabel('Iteration')
+    plt.ylabel('Loss')
+
+    plt.subplot(2, 1, 2)
+    plt.plot(stats['train_acc_history'], label='train')
+    plt.plot(stats['val_acc_history'], label='val')
+    plt.title('Classification accuracy history')
+    plt.xlabel('Epoch')
+    plt.ylabel('Clasification accuracy')
+    plt.show()
+
+def show_net_weights(net):
+    W1 = net.params['W1']
+    W1 = W1.reshape(32, 32, 3, -1).transpose(3, 0, 1, 2)
+    plt.imshow(visualize_grid(W1, padding=3).astype('uint8'))
+    plt.gca().axis('off')
+    plt.show()
+
+def best_nn(X_train,y_train,X_val,y_val,input_size,num_classes):
+    best_net = None 
+    # Define discrete hyperparameters to sweep through 
+    hidden_size = [40, 60, 80, 100, 120]
+    learning_rate = [1e-4, 5e-4, 1e-3, 5e-3]
+    reg = [0.2, 0.4, 0.6]
+    best_acc = -1
+
+    log = {}
+
+    for hs in hidden_size:
+        for lr in learning_rate:
+            for r in reg:
+                
+                # Set up the network
+                net = TwoLayerNet(input_size, hs, num_classes)
+
+                # Train the network
+                stats = net.train(X_train, y_train, X_val, y_val,
+                            num_iters=1000, batch_size=200,
+                            learning_rate=lr, learning_rate_decay=0.95,
+                            reg=r, verbose=False)
+                
+                acc = stats['val_acc_history'][-1]
+                log[(hs, lr, r)] = acc
+                
+                # Print Log
+                print('for hs: %e, lr: %e and r: %e, valid accuracy is: %f' 
+                        % (hs, lr, r, acc))
+                
+                if acc > best_acc:
+                    best_net = net
+                    best_acc = acc
+                    
+    print('Best Networks has an Accuracy of: %f' % best_acc)
