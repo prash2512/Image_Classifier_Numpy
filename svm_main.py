@@ -91,7 +91,7 @@ X_dev = np.hstack([X_dev, np.ones((X_dev.shape[0], 1))])
 print(X_train.shape, X_val.shape, X_test.shape, X_dev.shape)
 
 # generate a random SVM weight matrix of small numbers
-W = np.random.randn(3073, 10) * 0.0001 
+W = np.random.randn(3073, 10) * 0.0001
 
 loss, grad = svm_loss_vectorized(W, X_dev, y_dev, 0.000005)
 print(loss,grad)
@@ -114,7 +114,7 @@ print('validation accuracy: %f' % (np.mean(y_val == y_val_pred), ))
 
 
 learning_rates = [1e-7, 5e-5]
-regularization_strengths = [2.5e4, 5e4]
+regularization_strengths = [2.5e4,5e4]
 
 results = {}
 best_val = -1   # The highest validation accuracy that we have seen so far.
@@ -124,4 +124,10 @@ results,best_svm,best_val = choose_best_svm(X_train,y_train,X_val,y_val,learning
 
 print("Results dictionary",results,"\n\n") 
 print('best validation accuracy achieved during cross-validation: %f\n' % best_val)
-print('best svm lr and reg values\n', best_svm)
+
+y_test_pred = best_svm.predict(X_test)
+test_accuracy = np.mean(y_test == y_test_pred)
+print('linear SVM on raw pixels final test set accuracy: %f' % test_accuracy)
+
+visualize_bestsvm_weights(best_svm)
+

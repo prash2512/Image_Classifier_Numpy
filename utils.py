@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 from classifiers import KNearestNeighbor
 from classifiers.linear_classifier import LinearSVM
@@ -121,12 +122,56 @@ def choose_best_svm(X_train,y_train,X_val,y_val,learning_rates,regularization_st
             print('training accuracy: %f' % (np.mean(y_train == y_train_pred), ))
             y_val_pred = svm.predict(X_val)
             print('validation accuracy: %f' % (np.mean(y_val == y_val_pred), ))
-            results[(lr,reg)] = (np.mean(y_train == y_train_pred),np.mean(y_val == y_val_pred))
+            results[(lr,reg)] = (np.mean(y_train == y_train_pred),np.mean(y_val == y_val_pred),svm)
             for lr, reg in sorted(results):
-                train_accuracy, val_accuracy = results[(lr, reg)]
+                train_accuracy, val_accuracy,svm = results[(lr, reg)]
                 if val_accuracy>best_val:
-                    best_svm = (lr,reg)
+                    best_svm = svm
                     best_val = val_accuracy
                 print('lr %e reg %e train accuracy: %f val accuracy: %f' % (
                             lr, reg, train_accuracy, val_accuracy))
     return results,best_svm,best_val
+
+def plot_cross_validation_svm(results):
+    # Visualize the cross-validation results
+    x_scatter = [math.log10(x[0]) for x in results]
+    y_scatter = [math.log10(x[1]) for x in results]
+
+    # plot training accuracy
+    marker_size = 100
+    colors = [results[x][0] for x in results]
+    plt.subplot(2, 1, 1)
+    plt.scatter(x_scatter, y_scatter, marker_size, c=colors)
+    plt.colorbar()
+    plt.xlabel('log learning rate')
+    plt.ylabel('log regularization strength')
+    plt.title('CIFAR-10 training accuracy')
+
+    # plot validation accuracy
+    colors = [results[x][1] for x in results] # default size of markers is 20
+    plt.subplot(2, 1, 2)
+    plt.scatter(x_scatter, y_scatter, marker_size, c=colors)
+    plt.colorbar()
+    plt.xlabel('log learning rate')
+    plt.ylabel('log regularization strength')
+    plt.title('CIFAR-10 validation accuracy')
+    plt.show()
+
+def visualize_bestsvm_weights(best_svm):
+    # Visualize the learned weights for each class.
+    # Depending on your choice of learning rate and regularization strength, these may
+    # or may not be nice to look at.
+    w = best_svm.W[:-1,:] # strip out the bias
+    w = w.reshape(32, 32, 3, 10)
+    w_min, w_max = np.min(w), np.max(w)
+    classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+    for i in range(10):
+        plt.subplot(2, 5, i + 1)
+        
+        # Rescale the weights to be between 0 and 255
+        wimg = 255.0 * (w[:, :, :, i].squeeze() - w_min) / (w_max - w_min)
+        plt.imshow(wimg.astype('uint8'))
+        plt.axis('off')
+        plt.title(classes[i])
+
+    plt.show()
