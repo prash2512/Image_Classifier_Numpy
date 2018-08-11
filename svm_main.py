@@ -101,7 +101,7 @@ print(loss,grad)
 svm = LinearSVM()
 tic = time.time()
 loss_hist = svm.train(X_train, y_train, learning_rate=1e-7, reg=2.5e4,
-                      num_iters=3500, verbose=True)
+                      num_iters=1500, verbose=True)
 toc = time.time()
 print('That took %fs' % (toc - tic))
 
@@ -111,3 +111,17 @@ y_train_pred = svm.predict(X_train)
 print('training accuracy: %f' % (np.mean(y_train == y_train_pred), ))
 y_val_pred = svm.predict(X_val)
 print('validation accuracy: %f' % (np.mean(y_val == y_val_pred), ))
+
+
+learning_rates = [1e-7, 5e-5]
+regularization_strengths = [2.5e4, 5e4]
+
+results = {}
+best_val = -1   # The highest validation accuracy that we have seen so far.
+best_svm = None # The LinearSVM object that achieved the highest validation rate.
+
+results,best_svm,best_val = choose_best_svm(X_train,y_train,X_val,y_val,learning_rates,regularization_strengths)
+
+print("Results dictionary",results,"\n\n") 
+print('best validation accuracy achieved during cross-validation: %f\n' % best_val)
+print('best svm lr and reg values\n', best_svm)

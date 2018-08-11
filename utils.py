@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from classifiers import KNearestNeighbor
+from classifiers.linear_classifier import LinearSVM
 from gradient_check import grad_check_sparse
 
 def plot_samples(X_train,y_train):
@@ -107,3 +108,25 @@ def plot_loss(loss_hist):
     plt.xlabel('Iteration number')
     plt.ylabel('Loss value')
     plt.show()
+
+def choose_best_svm(X_train,y_train,X_val,y_val,learning_rates,regularization_strengths):
+    results = {}
+    best_svm = -1
+    best_val = None
+    for lr in learning_rates:
+        for reg in regularization_strengths:
+            svm = LinearSVM()
+            loss_hist = svm.train(X_train,y_train,learning_rate=lr,reg=reg,num_iters=1000)
+            y_train_pred = svm.predict(X_train)
+            print('training accuracy: %f' % (np.mean(y_train == y_train_pred), ))
+            y_val_pred = svm.predict(X_val)
+            print('validation accuracy: %f' % (np.mean(y_val == y_val_pred), ))
+            results[(lr,reg)] = (np.mean(y_train == y_train_pred),np.mean(y_val == y_val_pred))
+            for lr, reg in sorted(results):
+                train_accuracy, val_accuracy = results[(lr, reg)]
+                if val_accuracy>best_val:
+                    best_svm = (lr,reg)
+                    best_val = val_accuracy
+                print('lr %e reg %e train accuracy: %f val accuracy: %f' % (
+                            lr, reg, train_accuracy, val_accuracy))
+    return results,best_svm,best_val
