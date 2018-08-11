@@ -77,3 +77,24 @@ def plot_cross_validation_accuracy(k_choices,k_to_accuracies):
     plt.xlabel('k')
     plt.ylabel('Cross-validation accuracy')
     plt.show()
+
+def subtract_mean_image(X_train,X_val,X_test,X_dev):
+    # second: subtract the mean image from train and test data
+    mean_image = get_mean_image(X_train)
+    X_train -= mean_image
+    X_val -= mean_image
+    X_test -= mean_image
+    X_dev -= mean_image
+    return X_train,X_val,X_test,X_dev
+
+def get_mean_image(X_train):
+    # Preprocessing: subtract the mean image
+    # first: compute the image mean based on the training data
+    mean_image = np.mean(X_train, axis=0)
+    return mean_image
+
+def plot_show_meaniamge(mean_image):
+    print(mean_image[:10]) # print a few of the elements
+    plt.figure(figsize=(4,4))
+    plt.imshow(mean_image.reshape((32,32,3)).astype('uint8')) # visualize the mean image
+    plt.show()
