@@ -87,19 +87,17 @@ X_train,X_val,X_test,X_dev = subtract_mean_image(X_train,X_val,X_test,X_dev)
 print(X_train.shape, X_val.shape, X_test.shape, X_dev.shape)
 
 input_size = 32 * 32 * 3
-hidden_size = 50
+hidden_size = 120
 num_classes = 10
 net = TwoLayerNet(input_size,hidden_size,num_classes)
 stats = net.train(X_train, y_train, X_val, y_val,
             num_iters=1000, batch_size=200,
-            learning_rate=1e-5, learning_rate_decay=0.95,
-            reg=0.25, verbose=True)
+            learning_rate=1e-4, learning_rate_decay=0.95,
+            reg=0.2, verbose=True)
 
 # Predict on the validation set
 val_acc = (net.predict(X_val) == y_val).mean()
 print('Validation accuracy: ', val_acc)
 
-best_net = best_nn(X_train,y_train,X_val,y_val,input_size,num_classes)
-show_net_weights(best_net)
-
-
+test_acc = (net.predict(X_test) == y_test).mean()
+print('Test accuracy: ', test_acc)
