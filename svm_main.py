@@ -2,7 +2,9 @@ import random
 import numpy as np
 from data_utils import load_CIFAR10
 import matplotlib.pyplot as plt
-from classifiers.linear_svm import svm_loss_naive 
+from classifiers.linear_svm import svm_loss_naive,svm_loss_vectorized 
+from classifiers.linear_classifier import *
+import time
 from utils import *
 
 plt.rcParams['figure.figsize'] = (10.0, 8.0) # set default size of plots
@@ -91,7 +93,21 @@ print(X_train.shape, X_val.shape, X_test.shape, X_dev.shape)
 # generate a random SVM weight matrix of small numbers
 W = np.random.randn(3073, 10) * 0.0001 
 
-for i in range(1000):
-    loss, grad = svm_loss_naive(W, X_dev, y_dev, 0.000005)
-    W = W-0.0000001*grad
-    print('loss: %f' % (loss, ))
+loss, grad = svm_loss_vectorized(W, X_dev, y_dev, 0.000005)
+print(loss,grad)
+loss, grad = svm_loss_naive(W, X_dev, y_dev, 0.000005)
+print(loss,grad)
+
+svm = LinearSVM()
+tic = time.time()
+loss_hist = svm.train(X_train, y_train, learning_rate=1e-7, reg=2.5e4,
+                      num_iters=3500, verbose=True)
+toc = time.time()
+print('That took %fs' % (toc - tic))
+
+#plot_loss(loss_hist)
+
+y_train_pred = svm.predict(X_train)
+print('training accuracy: %f' % (np.mean(y_train == y_train_pred), ))
+y_val_pred = svm.predict(X_val)
+print('validation accuracy: %f' % (np.mean(y_val == y_val_pred), ))

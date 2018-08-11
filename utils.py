@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from classifiers import KNearestNeighbor
+from gradient_check import grad_check_sparse
 
 def plot_samples(X_train,y_train):
     classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
@@ -97,4 +98,12 @@ def plot_show_meaniamge(mean_image):
     print(mean_image[:10]) # print a few of the elements
     plt.figure(figsize=(4,4))
     plt.imshow(mean_image.reshape((32,32,3)).astype('uint8')) # visualize the mean image
+    plt.show()
+
+def plot_loss(loss_hist):
+    # A useful debugging strategy is to plot the loss as a function of
+    # iteration number:
+    plt.plot(loss_hist)
+    plt.xlabel('Iteration number')
+    plt.ylabel('Loss value')
     plt.show()
