@@ -1,11 +1,11 @@
 import random
 import numpy as np
-from data_utils import load_CIFAR10
+from utils.data_utils import load_CIFAR10
 import matplotlib.pyplot as plt
 from classifiers.linear_svm import svm_loss_naive,svm_loss_vectorized 
 from classifiers.linear_classifier import *
 import time
-from utils import *
+from utils.utils import *
 
 plt.rcParams['figure.figsize'] = (10.0, 8.0) # set default size of plots
 plt.rcParams['image.interpolation'] = 'nearest'
@@ -130,4 +130,3 @@ test_accuracy = np.mean(y_test == y_test_pred)
 print('linear SVM on raw pixels final test set accuracy: %f' % test_accuracy)
 
 visualize_bestsvm_weights(best_svm)
-
