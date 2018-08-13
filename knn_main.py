@@ -1,9 +1,9 @@
 import random
 import numpy as np
-from utils.data_utils import load_CIFAR10
+from Utils.data_utils import load_CIFAR10
 import matplotlib.pyplot as plt
 from classifiers import KNearestNeighbor
-from utils.utils import *
+from Utils.utils import *
 
 plt.rcParams['figure.figsize'] = (10.0, 8.0) # set default size of plots
 plt.rcParams['image.interpolation'] = 'nearest'
