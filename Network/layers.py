@@ -37,7 +37,7 @@ def affine_sigmoid_forward(x, w, b):
     - w, b: Weights for the affine layer
 
     Returns a tuple of:
-    - out: Output from the ReLU
+    - out: Output from the sigmoid
     - cache: Object to give to the backward pass
     """
     a, fc_cache = affine_forward(x, w, b)
@@ -64,7 +64,7 @@ def affine_tanh_forward(x, w, b):
     - w, b: Weights for the affine layer
 
     Returns a tuple of:
-    - out: Output from the ReLU
+    - out: Output from the tanh
     - cache: Object to give to the backward pass
     """
     a, fc_cache = affine_forward(x, w, b)
