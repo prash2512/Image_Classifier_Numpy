@@ -61,7 +61,8 @@ def sigmoid_backward(dout,cache):
     - dx: Gradient with respect to x
     """
     dout,x = dout, cache
-    dx = sigmoid_forward(x)*(1-sigmoid_forward(x))*dout
+    f,_ = sigmoid_forward(x)
+    dx = f*(1-f)*dout
     return dx 
 
 def tanh_forward(x):
